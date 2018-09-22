@@ -1,18 +1,19 @@
 /* eslint-disable react/display-name */
 import React, { Component } from 'react';
 import { createBottomTabNavigator, createStackNavigator } from 'react-navigation';
+import UserMangaScreen from './screens/UserMangaScreen';
 import HomeScreen from './screens/HomeScreen';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Feather } from '@expo/vector-icons';
 
 import { theme } from './utils/index';
 
-const HomeStackNav = createStackNavigator({
-  Home: {
-    screen: HomeScreen,
+const UserMangaNav = createStackNavigator({
+  UserManga: {
+    screen: UserMangaScreen,
   }
 }, {
   navigationOptions: () => ({
-    title: 'Browse',
+    title: 'My Manga',
     headerTintColor: 'white',
     headerStyle: {
       backgroundColor: theme.PRIMARY,
@@ -21,16 +22,32 @@ const HomeStackNav = createStackNavigator({
   })
 });
 
+const HomeScreenNav = createStackNavigator({
+  Home: {
+    screen: HomeScreen,
+  }
+}, {
+
+});
+
 const TabNav = createBottomTabNavigator(
   {
-    Home: HomeStackNav,
+    Home: HomeScreenNav,
+    UserManga: UserMangaNav,
   },
   {
-    navigationOptions: () => ({
-      tabBarIcon: ({ tintColor }) => (
-        <Ionicons name="md-bookmarks" size={30} color={tintColor}/>
-      )
+    navigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ tintColor }) => {
+        const { routeName } = navigation.state;
+        if (routeName === 'Home') {
+          return <Feather name="bookmark" size={30} color={tintColor}/>
+        } else if (routeName === 'UserManga') {
+          return <Ionicons name="md-bookmarks" size={30} color={tintColor}/>
+        }
+      }
     }),
+    swipeEnabled: true,
+    lazy: true,
     tabBarOptions: {
       activeTintColor: 'white',
       inactiveTintColor: 'gray',
