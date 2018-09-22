@@ -11,7 +11,7 @@ const wp = (percentage) => {
   return Math.round(value);
 }
 
-const slideWidth = wp(68);
+const slideWidth = wp(78);
 const itemHorizontalMargin = wp(1);
 
 export const sliderWidth = viewportWidth;
@@ -39,21 +39,21 @@ const data = [
 
 const Root = styled.View`
   backgroundColor: ${props => props.theme.PRIMARY};
-  justifyContent: center;
-  alignItems: center;
   flex: 1;
+  position: relative;
 `;
 
 const Wrapper = styled.View`
   justifyContent: center;
   alignItems: center;
-  height: 450;
+  height: 500;
+  top: 2%;
 `;
 
 class HomeScreen extends Component {
-  renderItem = ({ item }) => {
+  renderItem = ({ item, index }, parallaxProps) => {
     return (
-      <CardView item={item}/>
+      <CardView item={item} parallax={true} parallaxProps={parallaxProps}/>
     );
   } 
   render() {
@@ -65,6 +65,8 @@ class HomeScreen extends Component {
           layout={'default'} 
           ref={(c) => { this._carousel = c; }}
           data={data}
+          hasParallaxImages={true}
+          firstItem={1}
           renderItem={this.renderItem}
           sliderWidth={sliderWidth}
           itemWidth={itemWidth}
