@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import { ParallaxImage } from 'react-native-snap-carousel';
 
 import logo from '../op.png';
 
@@ -11,6 +10,7 @@ const ImageContainer = styled.View`
   shadowOffset: 5px 5px;
   shadowOpacity: 0.5;
   alignSelf: stretch;
+  width: 250;
 `;
 
 const Root = styled.View`
@@ -30,22 +30,12 @@ const MangaText = styled.Text`
   color: white;
   marginBottom: 20;
 `;
-const CardView = ({ item, parallax, parallaxProps }) => { // eslint-disable-line
+const CardView = ({ item, imageHeight }) => { // eslint-disable-line
   return (
     <Root>
       <MangaText>One Piece</MangaText>
-      <ImageContainer>
-        {parallax ? 
-          <ParallaxImage 
-            source={logo} 
-            parallaxFactor={0.35}
-            showSpinner={true}
-            containerStyle={{ flex: 1,  alignSelf: 'stretch' }}
-            style={{ height: null, width: null, flex: 1 }}
-            spinnerColor='white'
-            {...parallaxProps}
-          /> 
-        : <MangaCover source={logo} />}
+      <ImageContainer imageHeight={imageHeight}>
+        <MangaCover source={logo} />
       </ImageContainer>
     </Root>
   );

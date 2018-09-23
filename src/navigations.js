@@ -35,7 +35,7 @@ const TabNav = createBottomTabNavigator(
     Home: HomeScreenNav,
     UserManga: UserMangaNav,
   },
-  {
+  { initialRouteName: 'UserManga',
     navigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ tintColor }) => {
         const { routeName } = navigation.state;
