@@ -1,13 +1,15 @@
-import React, { Component } from 'react';
-import { FlatList } from 'react-native';
+import React, { PureComponent } from 'react';
+import { FlatList, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import StarRating from 'react-native-star-rating';
+import { connect } from 'react-redux';
 import { MaterialIcons } from '@expo/vector-icons';
 
 import logo from '../op.png';
 import { theme } from '../utils/index';
+import { getAllManga } from '../actions';
 
-const data = [
+const dummyData = [
   {
     index: '1',
     text: 'Hello 1',
@@ -39,7 +41,7 @@ const ListItem = styled.View`
   marginVertical: 5;
   paddingHorizontal: 5;
   justifyContent: space-between;
-  height: 200;
+  width: 100%;
   backgroundColor: ${props => props.theme.PRIMARY};
 `;
 
@@ -74,6 +76,7 @@ const ImageContainer = styled.View`
   shadowOpacity: 0.5;
   alignSelf: stretch;
   backgroundColor: red;
+  maxHeight: 200;
   marginLeft: 10;
   marginVertical: 20;
 `;
@@ -95,12 +98,30 @@ const ReadNowButton = styled.TouchableOpacity`
   borderRadius: 4;
 `;
 
-class HomeScreen extends Component {
+class HomeScreen extends PureComponent {
+  state = {
+    itemsCount: 15, 
+  };
+  componentDidMount() {
+    this.fetchAllManga();
+  }
+
+  // UNSAFE_componentWillReceiveProps(nextProps) {
+  //   this.setState({
+  //     data: nextProps.manga.data,
+  //     isLoading: nextProps.manga.isLoading,
+  //   })
+  // }
+  fetchAllManga = () => {
+    this.props.getAllManga();
+  }
   static navigationOptions  = () => ({
     title: 'Browse',
     headerTintColor: 'white',
     headerRight: (
-      <MaterialIcons name="search" size={30} color="white" style={{ marginRight: 10 }}/>
+      <TouchableOpacity>
+        <MaterialIcons name="search" size={30} color="white" style={{ marginRight: 10 }}/>
+      </TouchableOpacity>
     ),
     headerStyle: {
       backgroundColor: theme.PRIMARY,
@@ -111,7 +132,7 @@ class HomeScreen extends Component {
     return (
       <ListItem>
         <ImageContainer>
-          <MangaCover source={logo} />
+          <MangaCover source={{ uri: `https://cdn.mangaeden.com/mangasimg/${item.im}` }} defaultSource={logo}/>
         </ImageContainer>
         <ListRightContainer>
           <StarRating
@@ -125,9 +146,9 @@ class HomeScreen extends Component {
             starSize={20}
             fullStarColor={theme.YELLOW}
           />
-          <MangaText>{item.text}</MangaText>
-          <ChapterText>Chapter 919</ChapterText>
-          <ReadNowButton>
+          <MangaText>{(item.t !== null) ? item.t : 'YOOOO'}</MangaText>
+          <ChapterText>{(item.a !== null) ? item.a : 'YOOOO'}</ChapterText>
+          <ReadNowButton onPress={() => this.props.navigation.navigate('Manga')}>
             <ChapterText style={{ fontSize: 14, color: 'white', marginBottom: 0 }}>Read Now</ChapterText>
           </ReadNowButton>
         </ListRightContainer>
@@ -135,18 +156,31 @@ class HomeScreen extends Component {
     )
   }
   render () {
+    const { data, isLoading } = this.props.manga;
     return (
       <Root>
         <TitleLabel>Popular</TitleLabel>
-        <FlatList
-          contentContainerStyle={{ alignSelf: 'stretch' }}
-          data={data}
-          keyExtractor={item => item.index}
-          renderItem={this.renderItem}
-        />
+        {(!isLoading && (data !== null)) ? (
+            <FlatList
+            contentContainerStyle={{ alignSelf: 'stretch' }}
+            data={data}
+            keyExtractor={(item) => item.i}
+            renderItem={this.renderItem}
+            removeClippedSubviews={true}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            initialScrollIndex={0}
+            extraData={this.props.manga}
+          />
+        ):
+        (<ChapterText>Loading...</ChapterText>)}
       </Root>
     );
   }
 }
 
-export default HomeScreen;
+const mapStateToProps = (state) => ({
+  manga: state.manga,
+});
+
+export default connect(mapStateToProps, { getAllManga })(HomeScreen);

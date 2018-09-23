@@ -4,6 +4,7 @@ import { Dimensions } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import StarRating from 'react-native-star-rating';
 import Carousel from 'react-native-snap-carousel';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import CardView from '../components/CardView';
 import { theme } from '../utils/index';
@@ -102,37 +103,50 @@ const DateText = styled.Text`
 `;
 
 class UserMangaScreen extends Component {
+  static navigationOptions  = () => ({
+    title: 'My Manga',
+    headerTintColor: 'white',
+    headerRight: (
+      <TouchableOpacity>
+        <MaterialCommunityIcons name="delete" size={30} color="white" style={{ marginRight: 10 }}/>
+      </TouchableOpacity>
+    ),
+    headerStyle: {
+      backgroundColor: theme.PRIMARY,
+      borderBottomWidth: 0,
+    }
+  })
   renderItem = ({ item }) => {
 
     return (
       <Wrapper>
         <CardView item={item} imageHeight="500"/>
-          <ListBottomContainer>
-          <RatingAndDateContainer>
-            <DateText>05-01-2018</DateText>
-            <StarRating
-                disabled={true}
-                maxStars={5}
-                rating={4}
-                emptyStar={'ios-star-outline'}
-                fullStar={'ios-star'}
-                halfStar={'ios-star-half'}
-                iconSet={'Ionicons'}
-                starSize={20}
-                fullStarColor={theme.YELLOW}
-              />
-          </RatingAndDateContainer>
-          <ReadNowAndChapterContainer>
-            <VolumeAndAllContainer>
-              <ChapterText>Volume 24</ChapterText>
-              <TouchableOpacity><DateText>All Chapters</DateText></TouchableOpacity>
-            </VolumeAndAllContainer>
-            <ReadNowButton>
-              <ChapterText style={{ fontSize: 12 }}>Read Now</ChapterText>
-            </ReadNowButton>
-          </ReadNowAndChapterContainer>
-        </ListBottomContainer>
-      </Wrapper>
+        <ListBottomContainer>
+        <RatingAndDateContainer>
+          <DateText>05-01-2018</DateText>
+          <StarRating
+              disabled={true}
+              maxStars={5}
+              rating={4}
+              emptyStar={'ios-star-outline'}
+              fullStar={'ios-star'}
+              halfStar={'ios-star-half'}
+              iconSet={'Ionicons'}
+              starSize={20}
+              fullStarColor={theme.YELLOW}
+            />
+        </RatingAndDateContainer>
+        <ReadNowAndChapterContainer>
+          <VolumeAndAllContainer>
+            <ChapterText>Volume 24</ChapterText>
+            <TouchableOpacity><DateText>All Chapters</DateText></TouchableOpacity>
+          </VolumeAndAllContainer>
+          <ReadNowButton onPress={() => this.props.navigation.navigate('Manga')}>
+            <ChapterText style={{ fontSize: 12 }}>Read Now</ChapterText>
+          </ReadNowButton>
+        </ReadNowAndChapterContainer>
+      </ListBottomContainer>
+    </Wrapper>
     );
   } 
   render() {
@@ -147,8 +161,9 @@ class UserMangaScreen extends Component {
             renderItem={this.renderItem}
             sliderWidth={sliderWidth}
             itemWidth={itemWidth}
+            removeClippedSubviews={true}
+            inactiveSlideOpacity={0.2}
           />
-        
       </Root>
     );
   }

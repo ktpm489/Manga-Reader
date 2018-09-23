@@ -1,0 +1,1 @@
+export const GET_ALL_MANGA = 'GET_ALL_MANGA';

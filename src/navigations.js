@@ -1,33 +1,34 @@
 /* eslint-disable react/display-name */
-import React, { Component } from 'react';
+import React from 'react';
 import { createBottomTabNavigator, createStackNavigator } from 'react-navigation';
 import UserMangaScreen from './screens/UserMangaScreen';
 import HomeScreen from './screens/HomeScreen';
 import { Ionicons, Feather } from '@expo/vector-icons';
+import { connect } from 'react-redux';
+import {
+  createReactNavigationReduxMiddleware,
+  reduxifyNavigator,
+} from 'react-navigation-redux-helpers';
 
 import { theme } from './utils/index';
+import MangaScreen from './screens/MangaScreen';
 
 const UserMangaNav = createStackNavigator({
   UserManga: {
     screen: UserMangaScreen,
+  },
+  Manga: {
+    screen: MangaScreen,
   }
-}, {
-  navigationOptions: () => ({
-    title: 'My Manga',
-    headerTintColor: 'white',
-    headerStyle: {
-      backgroundColor: theme.PRIMARY,
-      borderBottomWidth: 0,
-    }
-  })
 });
 
 const HomeScreenNav = createStackNavigator({
   Home: {
     screen: HomeScreen,
+  },
+  Manga: {
+    screen: MangaScreen,
   }
-}, {
-
 });
 
 const TabNav = createBottomTabNavigator(
@@ -35,14 +36,14 @@ const TabNav = createBottomTabNavigator(
     Home: HomeScreenNav,
     UserManga: UserMangaNav,
   },
-  { initialRouteName: 'UserManga',
+  { initialRouteName: 'Home',
     navigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ tintColor }) => {
         const { routeName } = navigation.state;
         if (routeName === 'Home') {
-          return <Feather name="bookmark" size={30} color={tintColor}/>
-        } else if (routeName === 'UserManga') {
           return <Ionicons name="md-bookmarks" size={30} color={tintColor}/>
+        } else if (routeName === 'UserManga') {
+          return <Feather name="bookmark" size={30} color={tintColor}/>
         }
       }
     }),
@@ -59,12 +60,17 @@ const TabNav = createBottomTabNavigator(
   }
 );
 
-class AppMainNav extends Component {
-  render () {
-    return (
-      <TabNav/>
-    );
-  }
-}
+const navMiddleware = createReactNavigationReduxMiddleware(
+  'root',
+  state => state.nav
+);
 
-export default AppMainNav;
+const AppWithNavigationState = reduxifyNavigator(TabNav, "root");
+
+const mapStateToProps = state => ({
+  state: state.nav,
+});
+
+const AppMainNav = connect(mapStateToProps)(AppWithNavigationState);
+
+export { TabNav, AppMainNav, navMiddleware };
